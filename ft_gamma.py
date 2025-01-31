@@ -12,8 +12,10 @@ llm2 = OllamaLLM(model = 'mistral', temperature = 0.5)
 
 case = input("Case: ")
 tone = input("Tone: ")
+preplan = input("Preplan?: (y/n)")
 
 tone = "neutral" if tone == '' else tone
+preplan = "yes" if preplan == 'y' else "no"
 print(f"Set tone of discussion: {tone}")
 
 #sample cases
@@ -43,10 +45,13 @@ nRsoD = 6 #number of Rounds of Discussion
 whisper_delay = 2 #whisper after every 'n' round(s)
 sii = SII(llm = llm, llm2 = llm2)
 
-#determine if a strategy/plan is needed to guide the discussion
-strategy_is_needed, instruction = use_strategy(case = case, r = llm)
-if strategy_is_needed == "Yes":
-    strategy = sii(case = instruction, tone = "methodical, analytical, and objective", nRsoD = 4, whisper_delay = 1)
+if preplan == "yes":
+    #determine if a strategy/plan is needed to guide the discussion
+    strategy_is_needed, instruction = use_strategy(case = case, r = llm)
+    if strategy_is_needed == "Yes":
+        strategy = sii(case = instruction, tone = "methodical, analytical, and objective", nRsoD = 4, whisper_delay = 1)
+    else:
+        strategy = None
 else:
     strategy = None
 
